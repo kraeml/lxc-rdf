@@ -17,7 +17,7 @@ inputs:
     net: {}
     # LXC-Containers
     #
-- name: lxc_containers:
+- name: lxc_containers
   #type: Hash
   value:
     - name: 'foo'
@@ -33,7 +33,7 @@ inputs:
       # [Default: ubuntu]
       # type: str
 
-- name: lxc_users:
+- name: lxc_users
   #type: Hash
   value:
     - name: null
@@ -104,7 +104,7 @@ inputs:
       # [Default: (null)]
       # type: int
 
-- name: lxc_packages:
+- name: lxc_packages
   #type: Hash
   value:
     apt:
@@ -156,7 +156,7 @@ inputs:
         # present]
         lxc_container: ''
 
-- name: lxc_services:
+- name: lxc_services
   #type: Hash
   value:
     - name: ''
@@ -173,7 +173,7 @@ inputs:
       # type: str
       lxc_container: ''
 
-- name: lxc_ports:
+- name: lxc_ports
   #type: Hash
   value:
     - listening: null
