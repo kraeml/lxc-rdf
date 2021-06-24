@@ -1,0 +1,182 @@
+name: LXC-RDF
+title: LXC Compliance Test
+maintainer: Michael Schaar
+copyright: Michael Schaar
+copyright_email: Michael.Schaar@schulen.nuernberg.de
+license: Apache-2.0
+summary: Ein LXC Compiliance Test für die Rudolf Diesel Fachschule Nürnberg
+version: 0.1.0
+supports:
+  platform: linux
+inputs:
+- name: lxc_net
+  #type: Array
+  value:
+    # LXC-Network
+    #
+    net: {}
+    # LXC-Containers
+    #
+- name: lxc_containers:
+  #type: Hash
+  value:
+    - name: 'foo'
+      # Name of a container.
+      # type: str
+      state: absent
+      # Define the state of a container.
+      # (Choices: started, stopped, restarted, absent, frozen,
+      # clone)[Default: started]
+      # type: str
+      template: ubuntu
+      # Name of the template to use within an LXC create.
+      # [Default: ubuntu]
+      # type: str
+
+- name: lxc_users:
+  #type: Hash
+  value:
+    - name: null
+      # Name of the user
+      comment: null
+      # The description (aka `GECOS') of user account.
+      # [Default: (null)]
+      # type: str
+      expires: null
+      # An expiry time for the user in epoch.
+      # [Default: (null)]
+      # type: float
+      group: null
+      # The user's primary group (takes a group name).
+      # [Default: (null)]
+      # type: str
+      groups: null
+      # List of groups user is added.
+      #  [Default: (null)]
+      #  type: list
+      home: null
+      # The user's home directory.
+      # [Default: (null)]
+      # type: path
+      password: null
+      # The user's password.
+      # To create a disabled account on Linux systems, set this to `'!'' or `'*''.
+      # these password values.
+      # [Default: (null)]
+      #  type: str
+      password_type: null
+      #
+      password_lock: null
+      # Lock the password (usermod -L, pw lock, usermod -C).
+      # [Default: (null)]
+      # type: bool
+      shell: null
+      # The user's shell.
+      # on Ubuntu is `/bin/bash'.
+      # [Default: (null)]
+      # type: str
+      ssh_key_comment: $HOSTNAME
+      # The comment for the SSH key.
+      # [Default: $HOSTNAME]
+      # type: str
+      # version_added: 0.9
+      ssh_key_file: null
+      # SSH key filename.
+      # If this is a relative filename then it will be relative to the user's home directory.
+      # This parameter defaults to `.ssh/id_rsa'.
+      # [Default: (null)]
+      # type: path
+      ssh_key_type: null
+      # Optionally specify the type of SSH key to generate.
+      # Available SSH key types will depend on implementation present on target host.
+      # [Default: rsa]
+      # type: str
+      state: present
+      # Whether the account should exist or not, taking action if the state is different from what is stated.
+      # (Choices: absent, present)[Default: present]
+      # type: str
+      system: False
+      # When creating an account `state=present', setting this to `yes' makes the user a system account..
+      # [Default: False]
+      # type: bool
+      uid: null
+      # Optionally sets the `UID' of the user.
+      # [Default: (null)]
+      # type: int
+
+- name: lxc_packages:
+  #type: Hash
+  value:
+    apt:
+      - name: []
+        # A list of package names, like `foo', or package specifier with
+        # version, like `foo=1.0'. Name wildcards (fnmatch) like `apt*'
+        # and version wildcards like `foo=1.0*' are also supported.
+        # (Aliases: package, pkg)[Default: (null)]
+        # elements: str
+        # type: list
+        state: present
+        # Indicates the desired package state. `latest' ensures that the
+        # latest version is installed. `build-dep' ensures the package
+        # build dependencies are installed. `fixed' attempt to correct a
+        # system with broken dependencies in place.
+        # (Choices: absent, build-dep, latest, present, fixed)[Default:
+        # present]
+        lxc_container: ''
+    npm:
+      - name: []
+        # A list of package names, like `foo', or package specifier with
+        # version, like `foo=1.0'. Name wildcards (fnmatch) like `apt*'
+        # and version wildcards like `foo=1.0*' are also supported.
+        # (Aliases: package, pkg)[Default: (null)]
+        # elements: str
+        # type: list
+        state: present
+        # Indicates the desired package state. `latest' ensures that the
+        # latest version is installed. `build-dep' ensures the package
+        # build dependencies are installed. `fixed' attempt to correct a
+        # system with broken dependencies in place.
+        # (Choices: absent, build-dep, latest, present, fixed)[Default:
+        # present]
+        lxc_container: ''
+    pip:
+      - name: []
+        # A list of package names, like `foo', or package specifier with
+        # version, like `foo=1.0'. Name wildcards (fnmatch) like `apt*'
+        # and version wildcards like `foo=1.0*' are also supported.
+        # (Aliases: package, pkg)[Default: (null)]
+        # elements: str
+        # type: list
+        state: present
+        # Indicates the desired package state. `latest' ensures that the
+        # latest version is installed. `build-dep' ensures the package
+        # build dependencies are installed. `fixed' attempt to correct a
+        # system with broken dependencies in place.
+        # (Choices: absent, build-dep, latest, present, fixed)[Default:
+        # present]
+        lxc_container: ''
+
+- name: lxc_services:
+  #type: Hash
+  value:
+    - name: ''
+      # Name of the service.
+      # type: str
+      enabled: null
+      # Whether the service should start on boot.
+      # *At least one of state and enabled are required.*
+      # [Default: (null)]
+      # type: bool
+      state: null
+      # *At least one of state and enabled are required.*
+      # (Choices: started, stopped)[Default: (null)]
+      # type: str
+      lxc_container: ''
+
+- name: lxc_ports:
+  #type: Hash
+  value:
+    - listening: null
+      protocols: []
+      addresses: []
+      lxc_container: ''
