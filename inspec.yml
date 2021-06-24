@@ -20,15 +20,17 @@ inputs:
 - name: lxc_containers
   #type: Hash
   value:
-    - name: 'foo'
+    - name: null
       # Name of a container.
+      # required
       # type: str
       state: absent
       # Define the state of a container.
-      # (Choices: started, stopped, restarted, absent, frozen,
+      # (Choices: started, stopped, absent, frozen,
       # clone)[Default: started]
       # type: str
       template: ubuntu
+      # ToDo not tested yet.
       # Name of the template to use within an LXC create.
       # [Default: ubuntu]
       # type: str
@@ -38,6 +40,11 @@ inputs:
   value:
     - name: null
       # Name of the user
+      # required
+      # type: str
+      lxc_container: null
+      # required
+      # type: str
       comment: null
       # The description (aka `GECOS') of user account.
       # [Default: (null)]

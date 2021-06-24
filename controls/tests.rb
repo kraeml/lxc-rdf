@@ -1,23 +1,37 @@
-lxc_containers = input('lxc_containers')
-puts input_object('lxc_containers').diagnostic_string
-
 control 'machines' do
   impact 1.0
-  title 'Erstellen der LXC Maschinen'
+  title 'Verfügbarkeit der LXC Maschinen'
   desc 'Erstellen der Maschine'
+  desc 'ToDo Template Test einfügen'
   lxc_containers = input('lxc_containers')
   puts input_object('lxc_containers').diagnostic_string
-  #lxc_containers.each do |machine|
-  #  describe bash('sudo lxc-ls') do
-  #    # Gefolgt von einem Whitespace
-  #    its('stdout') { should match /#{machine[:'name']}\s+/ }
-  #  end
-  #  if bash('sudo lxc-ls --running | grep ' + machine[:'name']).exit_status != 0
-  #    describe bash('sudo lxc-start --name ' + machine[:'name']) do
-  #      its('exit_status') { should cmp 0 }
-  #    end
-  #  end
-  #end
+  lxc_containers.each do |machine|
+    # Run only if lxc name is set
+    only_if { machine[:'name'] }
+    if machine[:'state'] != 'absent'
+      describe bash('sudo lxc-ls') do
+        # Gefolgt von einem Whitespace
+        its('stdout') { should match /#{machine[:'name']}\s+/ }
+      end
+      # When set stated try to start and test it.
+      if machine[:'state'] == 'started'
+        if bash('sudo lxc-ls --running | grep ' + machine[:'name']).exit_status != 0
+          describe bash('sudo lxc-start --name ' + machine[:'name']) do
+            its('exit_status') { should cmp 0 }
+          end
+        end
+      else
+        describe bash('sudo lxc-ls --running | grep ' + machine[:'name']) do
+          its('exit_status') { should_not cmp 0}
+        end
+      end
+    else
+      describe bash('sudo lxc-ls') do
+        # Gefolgt von einem Whitespace
+        its('stdout') { should_not match /#{machine[:'name']}\s+/ }
+      end
+    end
+  end
 end
 
 control 'packages' do
@@ -25,7 +39,7 @@ control 'packages' do
   title 'Software auf der LXC Maschinen'
   desc 'Pakete auf der Maschine'
   lxc_containers = input('lxc_packages')
-  puts input_object('lxc_packages').diagnostic_string
+  #puts input_object('lxc_packages').diagnostic_string
   #lxc_containers.each do |machine|
   #  machine[:'apt'][:'name'].each do |package|
   #    describe package(package) do
@@ -40,7 +54,7 @@ control 'ports' do
   title 'Ports der LXC Maschinen'
   desc 'Ports der Maschine'
   lxc_containers = input('lxc_ports')
-  puts input_object('lxc_ports').diagnostic_string
+  #puts input_object('lxc_ports').diagnostic_string
   #lxc_containers.each do |machine|
   #  machine[:'ports'].each do |port|
   #    puts port
@@ -58,7 +72,7 @@ control 'services' do
   title 'Services auf der LXC Maschinen'
   desc 'Services auf der LXC Maschine'
   lxc_containers = input('lxc_services')
-  puts input_object('lxc_services').diagnostic_string
+  #puts input_object('lxc_services').diagnostic_string
   #lxc_containers.each do |machine|
   #  machine[:'services'].each do |service|
   #    describe service(service[:'name']) do
@@ -74,6 +88,6 @@ control 'users' do
   impact 1.0
   title 'Die Benutzer auf der LXC Maschinen'
   desc 'Die Benutzer auf der LXC Maschine'
-  lxc_containers = input('lxc_services')
-  puts input_object('lxc_services').diagnostic_string
+  lxc_containers = input('lxc_users')
+  #puts input_object('lxc_users').diagnostic_string
 end
