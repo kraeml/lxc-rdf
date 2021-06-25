@@ -1,10 +1,14 @@
+debug = input('debug')
+# puts input_object('debug').diagnostic_string
 control "lxc_net" do
   lxc_net = input('lxc_net')
-  #puts input_object('lxc_net').diagnostic_string
+  if debug
+    puts input_object('lxc_net').diagnostic_string
+  end
   impact 1.0
   title "LXC Netz mit dns und dhcp testen"
   desc "Das LXC Netz soll mit gegebenen Parametern laufen"
-
+  only_if { command('hostname').stdout == "vagrant\n"}
   describe systemd_service('lxc-net') do
     it { should be_installed }
     it { should be_enabled }
@@ -72,7 +76,9 @@ control 'machines' do
   desc 'Erstellen der Maschine'
   desc 'ToDo Template Test einfügen'
   lxc_containers = input('lxc_containers')
-  puts input_object('lxc_containers').diagnostic_string
+  if debug
+    puts input_object('lxc_containers').diagnostic_string
+  end
   lxc_containers.each do |machine|
     # Run only if lxc name is set
     only_if { machine[:'name'] }
@@ -107,7 +113,9 @@ control 'packages' do
   title 'Software auf der LXC Maschinen'
   desc 'Pakete auf der Maschine'
   lxc_containers = input('lxc_packages')
-  #puts input_object('lxc_packages').diagnostic_string
+  if debug
+    puts input_object('lxc_packages').diagnostic_string
+  end
   #lxc_containers.each do |machine|
   #  machine[:'apt'][:'name'].each do |package|
   #    describe package(package) do
@@ -122,7 +130,9 @@ control 'ports' do
   title 'Ports der LXC Maschinen'
   desc 'Ports der Maschine'
   lxc_containers = input('lxc_ports')
-  #puts input_object('lxc_ports').diagnostic_string
+  if debug
+    puts input_object('lxc_ports').diagnostic_string
+  end
   #lxc_containers.each do |machine|
   #  machine[:'ports'].each do |port|
   #    puts port
@@ -140,7 +150,9 @@ control 'services' do
   title 'Services auf der LXC Maschinen'
   desc 'Services auf der LXC Maschine'
   lxc_containers = input('lxc_services')
-  #puts input_object('lxc_services').diagnostic_string
+  if debug
+    puts input_object('lxc_services').diagnostic_string
+  end
   #lxc_containers.each do |machine|
   #  machine[:'services'].each do |service|
   #    describe service(service[:'name']) do
@@ -157,5 +169,7 @@ control 'users' do
   title 'Die Benutzer auf der LXC Maschinen'
   desc 'Die Benutzer auf der LXC Maschine'
   lxc_containers = input('lxc_users')
-  #puts input_object('lxc_users').diagnostic_string
+  if debug
+    puts input_object('lxc_users').diagnostic_string
+  end
 end
