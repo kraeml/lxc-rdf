@@ -12,21 +12,23 @@ inputs:
 - name: debug
   type: Boolean
   value: false
+- name: vagrant_hostname
+  type: String
+  value: 'vagrant'
 - name: lxc_net
-  #type: Hash
+  type: Hash
   value:
-    'hostname': 'vagrant'
-    # Runs this test only if hostname matches
-    'bridge': 'lxcbr0'
-    'domain': 'lxc'
-    'ip': '10.0.3.1'
-    'range_start': '10.0.3.2'
-    'range_end': '10.0.3.254'
-    'max_leases': 253
-    'netmask': '255.255.255.0'
-    'network': '10.0.3.0/24'
-    'dnsmasq_conf': '# LXC_DHCP_CONFILE=/etc/lxc/dnsmasq.conf'
-    'netzanteil': '10.0.3.'
+    # Runs this test only if vagrant_hostname matches
+    bridge: 'lxcbr0'
+    #domain: 'lxc'
+    ip: '10.0.3.1'
+    range_start: '10.0.3.2'
+    range_end: '10.0.3.254'
+    max_leases: 253
+    netmask: '255.255.255.0'
+    network: '10.0.3.0/24'
+    #dnsmasq_conf: '# LXC_DHCP_CONFILE=/etc/lxc/dnsmasq.conf'
+    netzanteil: '10.0.3.'
 
 - name: lxc_containers
   #type: Hash
@@ -141,6 +143,7 @@ inputs:
         # (Choices: absent, build-dep, latest, present, fixed)[Default:
         # present]
         lxc_container: ''
+
     npm:
       - name: []
         # A list of package names, like `foo', or package specifier with

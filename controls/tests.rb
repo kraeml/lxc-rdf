@@ -1,5 +1,10 @@
 debug = input('debug')
 # puts input_object('debug').diagnostic_string
+vagrant_hostname = input('vagrant_hostname')
+if debug
+  puts input_object('vagrant_hostname').diagnostic_string
+end
+
 control "lxc_net" do
   lxc_net = input('lxc_net')
   if debug
@@ -8,7 +13,8 @@ control "lxc_net" do
   impact 1.0
   title "LXC Netz mit dns und dhcp testen"
   desc "Das LXC Netz soll mit gegebenen Parametern laufen"
-  only_if { command('hostname').stdout == "vagrant\n"}
+  only_if { command('hostname').stdout == vagrant_hostname + "\n"}
+
   describe systemd_service('lxc-net') do
     it { should be_installed }
     it { should be_enabled }
@@ -28,45 +34,68 @@ control "lxc_net" do
     its('content') { should match "LXC_NETWORK=\"#{lxc_net[:'network']}\"" }
     its('content') { should match "LXC_DHCP_RANGE=\"#{lxc_net[:'range_start']},#{lxc_net[:'range_end']}\"" }
     its('content') { should match "LXC_DHCP_MAX=\"#{lxc_net[:'max_leases']}\"" }
-    its('content') { should match "#{lxc_net[:'dnsmasq_conf']}" }
-    its('content') { should match "LXC_DOMAIN=\"#{lxc_net[:'domain']}\"" }
+    if lxc_net[:'dnsmasq_conf']
+      path = Regexp.quote(lxc_net[:'dnsmasq_conf'])
+      its('content') { should match /^LXC_DHCP_CONFILE=#{path}/ }
+    else
+      its('content') { should match /^#\s*LXC_DHCP_CONFILE=\/etc\/lxc\/dnsmasq.conf/ }
+    end
+    if lxc_net[:'domain']
+      its('content') { should match /^LXC_DOMAIN=\"#{lxc_net[:'domain']}\"/ }
+    else
+      its('content') { should match /^#\s*LXC_DOMAIN=\"lxc\"/ }
+    end
+  end
+
+  if lxc_net[:'dnsmasq_conf']
+    describe file(lxc_net[:'dnsmasq_conf']) do
+      it { should exist }
+      it { should be_file }
+      it { should be_readable }
+      it { should be_writable }
+    end
   end
 
   # systemd-resolve --interface=${LXC_BRIDGE} \
   #              --set-dns=${LXC_ADDR} \
   #              --set-domain=${LXC_DOMAIN:-default}
   # FAILED=0
-  describe file('/usr/lib/x86_64-linux-gnu/lxc/lxc-net') do
-    search = /systemd-resolve\s*.*/
-    search_array = [ "--interface=.*", "--set-dns=.*", "--set-domain=.*" ]
-    search_array.each do |substring|
-        regex = Regexp.new( search.source + substring)
-        #/
-        it { should exist }
-        it { should be_file }
-        it { should be_readable }
-        it { should be_writable }
-        it { should be_owned_by 'root' }
-        its('mode') { should cmp '0755' }
-        its('content') { should match regex }
+  # ToDo Teste ob Eintrag vor FAILED=0 eingerichtet.
+  if lxc_net[:'domain']
+    describe file('/usr/lib/x86_64-linux-gnu/lxc/lxc-net') do
+      search = /systemd-resolve\s*.*/
+      search_array = [ "--interface=.*", "--set-dns=.*", "--set-domain=.*" ]
+      search_array.each do |substring|
+          regex = Regexp.new( search.source + substring)
+          #/
+          it { should exist }
+          it { should be_file }
+          it { should be_readable }
+          it { should be_writable }
+          it { should be_owned_by 'root' }
+          its('mode') { should cmp '0755' }
+          its('content') { should match regex }
+      end
     end
   end
 
-  lxc_interface=Regexp.quote("(#{lxc_net[:'bridge']})")
-  white_spaces="\\n(\s*.*:\s*.*\\n\\s*)+"
-  lxc_interface=lxc_interface+white_spaces
-  lxc_dns_ip=Regexp.quote("DNS Servers: #{lxc_net[:'ip']}")
-  lxc_dns_domain=Regexp.quote("DNS Domain: #{lxc_net[:'domain']}")
-  describe bash("ps aux | grep dnsmasq ") do
-    its('stdout') { should match /-s #{lxc_net[:'domain']} -S \/#{lxc_net[:'domain']}\// }
-  end
-  describe bash('systemd-resolve --status') do
-    lxc_vagrant_dns=lxc_interface+lxc_dns_ip
-    its('stdout') { should match lxc_vagrant_dns }
-  end
-  describe bash('systemd-resolve --status') do
-    lxc_vagrant_dns=lxc_interface+lxc_dns_domain
-    its('stdout') { should match lxc_vagrant_dns }
+  if lxc_net[:'domain']
+    lxc_interface=Regexp.quote("(#{lxc_net[:'bridge']})")
+    white_spaces="\\n(\s*.*:\s*.*\\n\\s*)+"
+    lxc_interface=lxc_interface+white_spaces
+    lxc_dns_ip=Regexp.quote("DNS Servers: #{lxc_net[:'ip']}")
+    lxc_dns_domain=Regexp.quote("DNS Domain: #{lxc_net[:'domain']}")
+    describe bash("ps aux | grep dnsmasq ") do
+      its('stdout') { should match /-s #{lxc_net[:'domain']} -S \/#{lxc_net[:'domain']}\// }
+    end
+    describe bash('systemd-resolve --status') do
+      lxc_vagrant_dns=lxc_interface+lxc_dns_ip
+      its('stdout') { should match lxc_vagrant_dns }
+    end
+    describe bash('systemd-resolve --status') do
+      lxc_vagrant_dns=lxc_interface+lxc_dns_domain
+      its('stdout') { should match lxc_vagrant_dns }
+    end
   end
 end
 
@@ -75,10 +104,12 @@ control 'machines' do
   title 'Verfügbarkeit der LXC Maschinen'
   desc 'Erstellen der Maschine'
   desc 'ToDo Template Test einfügen'
+  only_if { command('hostname').stdout == vagrant_hostname + "\n"}
   lxc_containers = input('lxc_containers')
   if debug
     puts input_object('lxc_containers').diagnostic_string
   end
+
   lxc_containers.each do |machine|
     # Run only if lxc name is set
     only_if { machine[:'name'] }
@@ -116,13 +147,15 @@ control 'packages' do
   if debug
     puts input_object('lxc_packages').diagnostic_string
   end
-  #lxc_containers.each do |machine|
-  #  machine[:'apt'][:'name'].each do |package|
-  #    describe package(package) do
-  #      it { should be_installed }
-  #    end
-  #  end
-  #end
+  lxc_packages.each do |machine|
+    if command('hostname').stdout == machine[:'lxc_container'] + "\n"
+      machine[:'apt'][:'name'].each do |package|
+        describe package(package) do
+          it { should be_installed }
+        end
+      end
+    end
+  end
 end
 
 control 'ports' do
