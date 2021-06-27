@@ -31,7 +31,7 @@ inputs:
     netzanteil: '10.0.3.'
 
 - name: lxc_containers
-  #type: Hash
+  type: Array
   value:
     - name: null
       # Name of a container.

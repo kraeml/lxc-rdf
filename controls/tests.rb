@@ -13,7 +13,7 @@ control "lxc_net" do
   impact 1.0
   title "LXC Netz mit dns und dhcp testen"
   desc "Das LXC Netz soll mit gegebenen Parametern laufen"
-  only_if { command('hostname').stdout == vagrant_hostname + "\n"}
+  only_if { command('hostname').stdout == vagrant_hostname + "\n" }
 
   describe systemd_service('lxc-net') do
     it { should be_installed }
@@ -103,8 +103,9 @@ control 'machines' do
   impact 1.0
   title 'Verfügbarkeit der LXC Maschinen'
   desc 'Erstellen der Maschine'
-  desc 'ToDo Template Test einfügen'
-  only_if { command('hostname').stdout == vagrant_hostname + "\n"}
+  desc 'ToDo Test für LXC-Template einfügen'
+  # In this control more only_if
+  only_if { command('hostname').stdout == vagrant_hostname + "\n" }
   lxc_containers = input('lxc_containers')
   if debug
     puts input_object('lxc_containers').diagnostic_string
