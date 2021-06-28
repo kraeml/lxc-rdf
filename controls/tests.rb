@@ -226,19 +226,31 @@ control 'services' do
   impact 1.0
   title 'Services auf der LXC Maschinen'
   desc 'Services auf der LXC Maschine'
+  desc 'ToDo Test mit label enabled and state'
   lxc_services = input('lxc_services')
   if debug
     puts input_object('lxc_services').diagnostic_string
   end
-  #lxc_containers.each do |machine|
-  #  machine[:'services'].each do |service|
-  #    describe service(service[:'name']) do
-  #      it { should be_installed }
-  #      it { should be_enabled }
-  #      it { should be_running }
-  #    end
-  #  end
-  #end
+  lxc_services.each do |service|
+    if service[:'lxc_container'] != '' and command('hostname').stdout == service[:'lxc_container'] + "\n"
+      describe service(service[:'name']) do
+        it { should be_installed }
+        #it { should be_enabled }
+        #it { should be_running }
+      end
+      if service[:'enabled']
+        describe service(service[:'name']) do
+          it { should be_enabled }
+          #it { should be_running }
+        end
+      end
+      if service[:'state'] == 'started'
+        describe service(service[:'name']) do
+          it { should be_running }
+        end
+      end
+    end
+  end
 end
 
 control 'users' do

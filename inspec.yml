@@ -178,7 +178,7 @@ inputs:
         lxc_container: ''
 
 - name: lxc_services
-  #type: Hash
+  type: Array
   value:
     - name: ''
       # Name of the service.
