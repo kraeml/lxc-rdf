@@ -195,7 +195,7 @@ inputs:
       lxc_container: ''
 
 - name: lxc_ports
-  #type: Hash
+  type: Array
   value:
     - listening: null
       protocols: []

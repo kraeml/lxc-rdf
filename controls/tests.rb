@@ -207,27 +207,26 @@ control 'ports' do
   impact 1.0
   title 'Ports der LXC Maschinen'
   desc 'Ports der Maschine'
-  lxc_containers = input('lxc_ports')
+  lxc_ports = input('lxc_ports')
   if debug
     puts input_object('lxc_ports').diagnostic_string
   end
-  #lxc_containers.each do |machine|
-  #  machine[:'ports'].each do |port|
-  #    puts port
-  #    describe port(port[:'listining']) do
-  #      it { should be_listening }
-  #      its('protocols') {should eq port[:'protocols']}
-  #      its('addresses') {should eq port[:'addresses']}
-  #    end
-  #  end
-  #end
+  lxc_ports.each do |port|
+    if port[:'lxc_container'] != '' and command('hostname').stdout == port[:'lxc_container'] + "\n"
+      describe port(port[:'listening']) do
+        it { should be_listening }
+        its('protocols') {should eq port[:'protocols']}
+        its('addresses') {should eq port[:'addresses']}
+      end
+    end
+  end
 end
 
 control 'services' do
   impact 1.0
   title 'Services auf der LXC Maschinen'
   desc 'Services auf der LXC Maschine'
-  lxc_containers = input('lxc_services')
+  lxc_services = input('lxc_services')
   if debug
     puts input_object('lxc_services').diagnostic_string
   end
