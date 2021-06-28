@@ -127,7 +127,7 @@ inputs:
 - name: lxc_packages
   #type: Hash
   value:
-    apt:
+    apts:
       - name: []
         # A list of package names, like `foo', or package specifier with
         # version, like `foo=1.0'. Name wildcards (fnmatch) like `apt*'
@@ -140,11 +140,11 @@ inputs:
         # latest version is installed. `build-dep' ensures the package
         # build dependencies are installed. `fixed' attempt to correct a
         # system with broken dependencies in place.
-        # (Choices: absent, build-dep, latest, present, fixed)[Default:
+        # (Choices: absent, latest, present)[Default:
         # present]
         lxc_container: ''
 
-    npm:
+    npms:
       - name: []
         # A list of package names, like `foo', or package specifier with
         # version, like `foo=1.0'. Name wildcards (fnmatch) like `apt*'
@@ -160,7 +160,7 @@ inputs:
         # (Choices: absent, build-dep, latest, present, fixed)[Default:
         # present]
         lxc_container: ''
-    pip:
+    pips:
       - name: []
         # A list of package names, like `foo', or package specifier with
         # version, like `foo=1.0'. Name wildcards (fnmatch) like `apt*'

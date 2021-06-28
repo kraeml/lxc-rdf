@@ -144,15 +144,59 @@ control 'packages' do
   impact 1.0
   title 'Software auf der LXC Maschinen'
   desc 'Pakete auf der Maschine'
-  lxc_containers = input('lxc_packages')
+  lxc_packages = input('lxc_packages')
   if debug
     puts input_object('lxc_packages').diagnostic_string
   end
-  lxc_packages.each do |machine|
-    if command('hostname').stdout == machine[:'lxc_container'] + "\n"
-      machine[:'apt'][:'name'].each do |package|
-        describe package(package) do
-          it { should be_installed }
+  # ToDo lxc_container bette as an array
+  # ToDo DRY with apts, npms and pips better in function
+  lxc_packages[:'apts'].each do |apt|
+    if apt[:'lxc_container'] != '' and command('hostname').stdout == apt[:'lxc_container'] + "\n"
+      if apt[:'state'] == 'present'
+        apt[:'name'].each do |package|
+          describe package(package) do
+            it { should be_installed }
+          end
+        end
+      else
+        apt[:'name'].each do |package|
+          describe package(package) do
+            it { should_not be_installed }
+          end
+        end
+      end
+    end
+  end
+  lxc_packages[:'npms'].each do |npm|
+    if npm[:'lxc_container'] != '' and command('hostname').stdout == npm[:'lxc_container'] + "\n"
+      if npm[:'state'] == 'present'
+        npm[:'name'].each do |package|
+          describe npm(package) do
+            it { should be_installed }
+          end
+        end
+      else
+        npm[:'name'].each do |package|
+          describe npm(package) do
+            it { should_not be_installed }
+          end
+        end
+      end
+    end
+  end
+  lxc_packages[:'pips'].each do |pip|
+    if pip[:'lxc_container'] != '' and command('hostname').stdout == pip[:'lxc_container'] + "\n"
+      if pip[:'state'] == 'present'
+        pip[:'name'].each do |package|
+          describe npm(package) do
+            it { should be_installed }
+          end
+        end
+      else
+        pip[:'name'].each do |package|
+          describe pip(package) do
+            it { should_not be_installed }
+          end
         end
       end
     end
