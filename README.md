@@ -12,6 +12,14 @@ inspec exec https://github.com/kraeml/lxc-rdf.git
 
 ACHTUNG: Es wird nur der localhost (Vagrant) überprüft. Zur Zeit lxc_net und machines.
 
+__HINWEIS__: Falls die Vagrantmaschine einen anderen Hostname als `vagrant` hat, folgender Aufruf:
+
+```bash
+inspec exec https://github.com/kraeml/lxc-rdf.git -input vagrant_hostname=HOSTNAME
+```
+
+Wobei HOSTNAME durch den hostname der Vagrantmaschine zu ersetzen ist.
+
 ### LXC Netzwerk
 
 ```bash
