@@ -78,17 +78,17 @@ lxc_packages:
       :lxc_container: 'nodered'
 
 lxc_ports:
-  - :listening: 1880
+  - :listening: 1883
     :protocols:
       - tcp
     :addresses:
       - 0.0.0.0
-    :lxc_container: 'nodered'
+    :lxc_container: 'mqtt'
 lxc_services:
-  - :name: 'nodered'
+  - :name: 'mosquitto'
     :enabled: true
     :state: started
-    :lxc_container: 'nodered'
+    :lxc_container: 'mqtt'
 ...
 ```
 
@@ -96,7 +96,7 @@ Die Doppelpunkte und Einrückungen sind wichtig.
 
 Die Doppelpunkte wird von InSpec (Ruby) als Symbole benötigt.
 
-Die Einrückungen sind im Syntax von YAML vorgeschrieben. 
+Die Einrückungen sind im Syntax von YAML vorgeschrieben.
 
 ### Ausführen von machines mit Input-File
 
@@ -107,5 +107,5 @@ inspec exec https://github.com/kraeml/lxc-rdf.git --controls machines --input-fi
 ### Ausführen via ssh
 
 ```bash
-inspec exec https://github.com/kraeml/lxc-rdf.git --controls packages ports services --input-file /vagrant/notebooks/lxc-rdf-testing.yml -t ssh://ubuntu:ubuntu@nodered.lxc
+inspec exec https://github.com/kraeml/lxc-rdf.git --controls packages ports services --input-file /vagrant/notebooks/lxc-rdf-testing.yml -t ssh://ubuntu:ubuntu@mqtt.lxc
 ```
