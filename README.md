@@ -80,9 +80,11 @@ lxc_packages:
 lxc_ports:
   - :listening: 1883
     :protocols:
-      - tcp
+      - 'tcp'
+      - 'tcp6'
     :addresses:
-      - 0.0.0.0
+      - '0.0.0.0'
+      - '::'
     :lxc_container: 'mqtt'
 lxc_services:
   - :name: 'mosquitto'
