@@ -188,7 +188,7 @@ control 'packages' do
     if pip[:'lxc_container'] != '' and command('hostname').stdout == pip[:'lxc_container'] + "\n"
       if pip[:'state'] == 'present'
         pip[:'name'].each do |package|
-          describe npm(package) do
+          describe pip(package) do
             it { should be_installed }
           end
         end
