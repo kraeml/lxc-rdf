@@ -33,7 +33,7 @@ inputs:
 - name: lxc_containers
   type: Array
   value:
-    - name: null
+    - name: 'foo'
       # Name of a container.
       # required
       # type: str
